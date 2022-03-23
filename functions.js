@@ -1,5 +1,5 @@
-const authors = require("./authors.json");
-const books = require("./books.json");
+const authors = require('./authors.json');
+const books = require('./books.json');
 
 /**************************************************************
  * getBookById(bookId, books):
@@ -10,6 +10,7 @@ const books = require("./books.json");
  ****************************************************************/
 function getBookById(bookId, books) {
   // Your code goes here
+  return books.find((e) => e.id == bookId);
 }
 // console.log(getBookById(12, books));
 
@@ -22,6 +23,7 @@ function getBookById(bookId, books) {
  ****************************************************************/
 function getAuthorByName(authorName, authors) {
   // Your code goes here
+  return authors.find((e) => e.name.toLowerCase() === authorName.toLowerCase());
 }
 // console.log(getAuthorByName("J.K. Rowling", authors));
 
@@ -33,6 +35,11 @@ function getAuthorByName(authorName, authors) {
  ****************************************************************/
 function bookCountsByAuthor(authors) {
   // Your code goes here
+  const result = [];
+  authors.forEach((e) =>
+    result.push({ author: e.name, bookCount: e.books.length })
+  );
+  return result;
 }
 // console.log(bookCountsByAuthor(authors));
 
@@ -47,10 +54,10 @@ function booksByColor(books) {
   const colors = {};
 
   // Your code goes here
-
+  books.forEach((e) => (colors[e.color] = [e.title]));
   return colors;
 }
-// console.log(booksByColor(books));
+console.log(booksByColor(books));
 
 /**************************************************************
  * titlesByAuthorName(authorName, authors, books):
@@ -62,8 +69,16 @@ function booksByColor(books) {
  ****************************************************************/
 function titlesByAuthorName(authorName, authors, books) {
   // Your code goes here
+  const result = [];
+
+  const authorBooks = books.filter(
+    (e) => e.authors[0].name.toLowerCase() === authorName.toLowerCase()
+  );
+  authorBooks.forEach((e) => result.push(e.title));
+  return result;
 }
-// console.log(titlesByAuthorName("George R.R. Martin", authors, books));
+// console.log(titlesByAuthorName('Terry Pratchett', authors, books));
+// console.log(titlesByAuthorName('Neil Gaiman', authors, books));
 
 /**************************************************************
  * mostProlificAuthor(authors):
@@ -74,6 +89,11 @@ function titlesByAuthorName(authorName, authors, books) {
  ****************************************************************/
 function mostProlificAuthor(authors) {
   // Your code goes here
+  const authorsBooksNum = [];
+  authors.forEach((e) => authorsBooksNum.push(e.books.length));
+
+  return authors[authorsBooksNum.indexOf(Math.max.apply(Math, authorsBooksNum))]
+    .name;
 }
 // console.log(mostProlificAuthor(authors));
 
@@ -102,8 +122,21 @@ function mostProlificAuthor(authors) {
  ****************************************************************/
 function relatedBooks(bookId, authors, books) {
   // Your code goes here
+  const result = [];
+  const organisedResult = [];
+  const authorNum = books.find((e) => e.id == bookId).authors.length;
+  const authorsName = [];
+  for (let i = 0; i < authorNum; i++) {
+    authorsName.push(books.find((e) => e.id == bookId).authors[i].name);
+  }
+
+  authorsName.forEach((e) =>
+    result.push(titlesByAuthorName(e, authors, books))
+  );
+  result.forEach((e) => e.forEach((e) => organisedResult.push(e)));
+  return organisedResult.sort();
 }
-// console.log(relatedBooks(50, authors, books));
+console.log(relatedBooks(46, authors, books));
 
 /**************************************************************
  * friendliestAuthor(authors):
