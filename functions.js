@@ -54,7 +54,12 @@ function booksByColor(books) {
   const colors = {};
 
   // Your code goes here
-  books.forEach((e) => (colors[e.color] = [e.title]));
+  books.forEach((e) => {
+    if (!([e.color] in colors)) colors[e.color] = [e.title];
+    else {
+      colors[e.color].push(e.title);
+    }
+  });
   return colors;
 }
 console.log(booksByColor(books));
